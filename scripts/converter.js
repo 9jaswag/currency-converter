@@ -1,30 +1,58 @@
 const currenciesURL = "https://free.currencyconverterapi.com/api/v5/currencies";
 const fromSelect = document.querySelector('#from-currency');
 const toSelect = document.querySelector('#to-currency');
+const currency = document.querySelector('#currency');
+const convertedCurrency = document.querySelector('#converted-currency');
+const convertButton = document.querySelector('#convert-button');
 
-const getCurrencies = () => {
-  return fetch(currenciesURL)
+// function for making GET requests 
+const getRequest = (url) => {
+  return fetch(url)
     .then(response => {
       if (response.status != 200) {
         return
       }
       return response.json();
     })
-    .then(response => response.results);
+    .then(response => response);
 };
 
+// function for populating the select fields on the page with the currencies
 const populateSelectFields = async () => {
-  let currencies = await getCurrencies();
-  for (let country in currencies) {
+  const { results } = await getRequest(currenciesURL);
+  console.log(results)
+  for (let country in results) {
     let option = document.createElement("option");
     let option2 = document.createElement("option");
-    option.value = currencies[country].id;
-    option2.value = currencies[country].id;
-    option.innerHTML = `${currencies[country].currencyName} (${currencies[country].id})`;
-    option2.innerHTML = `${currencies[country].currencyName} (${currencies[country].id})`;
+    option.value = results[country].id;
+    option2.value = results[country].id;
+    option.innerHTML = `${results[country].currencyName} (${results[country].id})`;
+    option2.innerHTML = `${results[country].currencyName} (${results[country].id})`;
     fromSelect.appendChild(option)
     toSelect.appendChild(option2)
   }
+}
+
+// function for confirming if all required fields are filled
+const validateFields = () => {
+  if (fromSelect.value === "Select a currency" || toSelect.value === "Select a currency") {
+    return false;
+  }
+
+  if (currency.value.length === 0 || isNaN(currency.value)) {
+    return false;
+  }
+
+  return true;
+}
+
+convertButton.onclick = async () => {
+  if (validateFields()) {
+    const currencies = `${fromSelect.value}_${toSelect.value}`
+    const conversionURL = `https://free.currencyconverterapi.com/api/v5/convert?q=${currencies}&compact=ultra`;
+    let exchangeRate = await getRequest(conversionURL);
+    console.log(exchangeRate[currencies])
+  };
 }
 
 
