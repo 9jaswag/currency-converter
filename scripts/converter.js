@@ -24,6 +24,11 @@ const populateSelectFields = async () => {
     let option = document.createElement("option");
     let option2 = document.createElement("option");
     option.value = results[country].id;
+    // set the currency symbol based on whether it exists or not
+    const symbol = results[country].currencySymbol ? results[country].currencySymbol : results[country].id;
+    // set the currency symbol as a data attribute
+    option.setAttribute('data-symbol', symbol)
+    option2.setAttribute('data-symbol', symbol)
     option2.value = results[country].id;
     option.innerHTML = `${results[country].currencyName} (${results[country].id})`;
     option2.innerHTML = `${results[country].currencyName} (${results[country].id})`;
@@ -57,7 +62,8 @@ convertButton.onclick = async () => {
     const conversionURL = `https://free.currencyconverterapi.com/api/v5/convert?q=${currencies}&compact=ultra`;
     let exchangeRate = await getRequest(conversionURL);
     convertedCurrency = converter(exchangeRate[currencies])
-    convertedCurrencyField.value = convertedCurrency.toFixed(2)
+    const currencySymbol = toSelect.selectedOptions[0].dataset.symbol
+    convertedCurrencyField.value = `${currencySymbol} ${convertedCurrency.toFixed(2)}`
   };
 }
 
