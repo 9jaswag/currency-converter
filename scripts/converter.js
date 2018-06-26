@@ -2,7 +2,7 @@ const currenciesURL = "https://free.currencyconverterapi.com/api/v5/currencies";
 const fromSelect = document.querySelector('#from-currency');
 const toSelect = document.querySelector('#to-currency');
 const currency = document.querySelector('#currency');
-const convertedCurrency = document.querySelector('#converted-currency');
+const convertedCurrencyField = document.querySelector('#converted-currency');
 const convertButton = document.querySelector('#convert-button');
 
 // function for making GET requests 
@@ -20,7 +20,6 @@ const getRequest = (url) => {
 // function for populating the select fields on the page with the currencies
 const populateSelectFields = async () => {
   const { results } = await getRequest(currenciesURL);
-  console.log(results)
   for (let country in results) {
     let option = document.createElement("option");
     let option2 = document.createElement("option");
@@ -46,12 +45,19 @@ const validateFields = () => {
   return true;
 }
 
+// function for calculating currency conversion
+const converter = (exchangeRate) => currency.value * exchangeRate;
+
+// add click event listener to the convert button
 convertButton.onclick = async () => {
   if (validateFields()) {
+    // disable currency field while getting exchange rate
+    currency.disabled = true
     const currencies = `${fromSelect.value}_${toSelect.value}`
     const conversionURL = `https://free.currencyconverterapi.com/api/v5/convert?q=${currencies}&compact=ultra`;
     let exchangeRate = await getRequest(conversionURL);
-    console.log(exchangeRate[currencies])
+    convertedCurrency = converter(exchangeRate[currencies])
+    convertedCurrencyField.value = convertedCurrency.toFixed(2)
   };
 }
 
