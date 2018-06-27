@@ -23,7 +23,6 @@ self.addEventListener('install', (event) => {
 // listen for fetch events
 self.addEventListener('fetch', (event) => {
   const requestUrl = new URL(event.request.url);
-  console.log(requestUrl)
 
   if (requestUrl.origin === location.origin) {
     if (requestUrl.pathname === '/') {
