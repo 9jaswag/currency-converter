@@ -1,5 +1,6 @@
 const cacheName = 'currency-converter-v1';
 const urlsToCache = [
+  '/',
   '/style.css',
   '/scripts/require.js',
   '/scripts/index.js',
@@ -22,7 +23,7 @@ self.addEventListener('install', (event) => {
 // listen for fetch events
 self.addEventListener('fetch', (event) => {
   const requestUrl = new URL(event.request.url);
-  // console.log(requestUrl)
+  console.log(requestUrl)
 
   if (requestUrl.origin === location.origin) {
     if (requestUrl.pathname === '/') {
@@ -38,8 +39,10 @@ self.addEventListener('fetch', (event) => {
       return;
     }
 
-    if (requestUrl.pathname.endsWith('ultra')) {
+    if (requestUrl.pathname.endsWith('convert')) {
       console.log('gotten x rate')
+      // event.respondWith(serveExchangeRate(event.request));
+      // return;
     }
   }
 
@@ -59,6 +62,22 @@ const serveCurrencies = (request) => {
         cache.put(storageUrl, networkResponse.clone());
         return networkResponse;
       });
+
+      return response || networkFetch;
+    });
+  });
+}
+
+const serveExchangeRate = (request) => {
+  const storageUrl = "api/v5/currencies";
+
+  return caches.open(cacheName).then((cache) => {
+    return cache.match(storageUrl).then((response) => {
+      let networkFetch = fetch(request).then((networkResponse) => {
+        cache.put(storageUrl, networkResponse.clone());
+        return networkResponse;
+      });
+      console.log(response || networkFetch)
 
       return response || networkFetch;
     });

@@ -5,7 +5,7 @@ define(function () {
 
 class IndexController {
   constructor() {
-    this.registerServiceWorker()
+    this.registerServiceWorker();
   }
 
   registerServiceWorker() {

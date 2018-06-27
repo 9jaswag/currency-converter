@@ -1,3 +1,7 @@
+define(function () {
+  return populateSelectFields;
+})
+
 const currenciesURL = "https://free.currencyconverterapi.com/api/v5/currencies";
 const fromSelect = document.querySelector('#from-currency');
 const toSelect = document.querySelector('#to-currency');
@@ -67,6 +71,3 @@ convertButton.onclick = async () => {
   };
 }
 
-
-
-window.onload = populateSelectFields;
