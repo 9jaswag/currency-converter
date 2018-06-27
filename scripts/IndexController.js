@@ -1,11 +1,14 @@
 // export the IndexController using requirejs
-define(function () {
+define(function (require) {
+  // require the Converter class
+  const Converter = require('./converter');
   return IndexController;
 });
 
 class IndexController {
   constructor() {
     this.registerServiceWorker();
+    new Converter()
   }
 
   registerServiceWorker() {

@@ -1,5 +1,4 @@
-// use requirejs to include the converter and index controller file
-requirejs(["converter", "IndexController"], (converter, IndexController) => {
+// use requirejs to require the index controller file
+requirejs(["IndexController"], (IndexController) => {
   new IndexController();
-  converter();
 });
