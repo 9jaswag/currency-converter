@@ -78,11 +78,19 @@ class Converter {
     convertButton.onclick = async () => {
       if (this.validateFields()) {
         // disable currency field while getting exchange rate
-        currency.disabled = true
-        const currencies = `${fromSelect.value}_${toSelect.value}`
+        currency.disabled = true; // enable later
+        const currencies = `${fromSelect.value}_${toSelect.value}`;
         const conversionURL = `https://free.currencyconverterapi.com/api/v5/convert?q=${currencies}&compact=ultra`;
-        let exchangeRate = await getRequest(conversionURL);
-        convertedCurrency = converter(exchangeRate[currencies])
+        let exchangeRate = await this.getRequest(conversionURL);
+        // add exchange rate to indexDB
+        this.dbPromise.then(function (db) {
+          if (!db) return;
+
+          let tx = db.transaction('exchangeRates', 'readwrite');
+          let store = tx.objectStore('exchangeRates');
+          store.put(currencies, exchangeRate[currencies]);
+        });
+        const convertedCurrency = this.converter(exchangeRate[currencies])
         const currencySymbol = toSelect.selectedOptions[0].dataset.symbol
         convertedCurrencyField.value = `${currencySymbol} ${convertedCurrency.toFixed(2)}`
       };
