@@ -3,6 +3,7 @@ const urlsToCache = [
   '/',
   '/style.css',
   '/scripts/require.js',
+  '/scripts/idb.js',
   '/scripts/index.js',
   '/scripts/converter.js',
   '/scripts/IndexController.js',
@@ -32,8 +33,13 @@ self.addEventListener('fetch', (event) => {
   }
 
   if (requestUrl.origin === "https://free.currencyconverterapi.com") {
-    console.log('calling outside')
+    console.log('calling outsides')
     if (requestUrl.pathname.endsWith('currencies')) {
+      event.respondWith(serveCurrencies(event.request));
+      return;
+    }
+
+    if (requestUrl.pathname.endsWith('curvenc')) {
       event.respondWith(serveCurrencies(event.request));
       return;
     }

@@ -41,11 +41,19 @@ class Converter {
     });
   }
 
+  deleteDbValue(key) {
+    return this.dbPromise.then(db => {
+      const tx = db.transaction('exchangeRates', 'readwrite');
+      tx.objectStore('exchangeRates').delete(key);
+      return tx.complete;
+    });
+  }
+
   getRequest(url) {
     return fetch(url)
       .then(response => {
-        if (response.status != 200) {
-          return
+        if (response.status != 200) { // handle errors later
+          return false;
         }
         return response.json();
       })
@@ -89,96 +97,38 @@ class Converter {
     return currency.value * exchangeRate;
   }
 
-  getExchangeRate(url, currencies) {
-    // const requestUrl = new URL(url);
-    this.getDbValue(0.865404).then(response => {
-      console.log(response)
+  async getExchangeRate(url, currencies) {
+    // get the exchange rate from the currency API
+    let networkFetch = await this.getRequest(url);
+    // let networkFetch = { "USD_NGN": 359.999799 };
+    console.log(networkFetch)
+    // check the indexDB to see if the exchange also exists
+    return this.getDbValue(1.351085).then(response => {
+      // if the exchange rate exists, replace it with the latest one from the API call before sending it to the user
+      if (response) {
+        console.log(response)
+        // delete the response from the iDB
+        this.deleteDbValue(1.351085);
+      }
+      // add the new exchange rate to the iDB
+      this.setDbValue(currencies, networkFetch)
+
+      // return the response if it exists in thr indexDB or the network response if it doesn't exist
+      return response || networkFetch;
     })
   }
 
   handleClick() {
     convertButton.onclick = async () => {
       if (this.validateFields()) {
-        // disable currency field while getting exchange rate
-        currency.disabled = true; // enable later
         const currencies = `${fromSelect.value}_${toSelect.value}`;
         const conversionURL = `https://free.currencyconverterapi.com/api/v5/convert?q=${currencies}&compact=ultra`;
         let exchangeRate = await this.getExchangeRate(conversionURL, currencies);
-        // add exchange rate to indexDB
-        // this.dbPromise.then(function (db) {
-        //   if (!db) return;
-
-        //   let tx = db.transaction('exchangeRates', 'readwrite');
-        //   let store = tx.objectStore('exchangeRates');
-        //   store.put({ currencies: exchangeRate[currencies] }, currencies);
-        // });
-        // const convertedCurrency = this.converter(exchangeRate[currencies])
-        // const currencySymbol = toSelect.selectedOptions[0].dataset.symbol
-        // convertedCurrencyField.value = `${currencySymbol} ${convertedCurrency.toFixed(2)}`
+        const convertedCurrency = this.converter(exchangeRate[currencies])
+        const currencySymbol = toSelect.selectedOptions[0].dataset.symbol
+        // NAN check
+        convertedCurrencyField.value = `${currencySymbol} ${convertedCurrency.toFixed(2)}`;
       };
     }
   }
 }
-
-// function for making GET requests 
-// const getRequest = (url) => {
-//   return fetch(url)
-//     .then(response => {
-//       if (response.status != 200) {
-//         return
-//       }
-//       return response.json();
-//     })
-//     .then(response => response);
-// };
-
-// // function for populating the select fields on the page with the currencies
-// const populateSelectFields = async () => {
-//   const { results } = await getRequest(currenciesURL);
-//   for (let country in results) {
-//     let option = document.createElement("option");
-//     let option2 = document.createElement("option");
-//     option.value = results[country].id;
-//     // set the currency symbol based on whether it exists or not
-//     const symbol = results[country].currencySymbol ? results[country].currencySymbol : results[country].id;
-//     // set the currency symbol as a data attribute
-//     option.setAttribute('data-symbol', symbol)
-//     option2.setAttribute('data-symbol', symbol)
-//     option2.value = results[country].id;
-//     option.innerHTML = `${results[country].currencyName} (${results[country].id})`;
-//     option2.innerHTML = `${results[country].currencyName} (${results[country].id})`;
-//     fromSelect.appendChild(option)
-//     toSelect.appendChild(option2)
-//   }
-// }
-
-// // function for confirming if all required fields are filled
-// const validateFields = () => {
-//   if (fromSelect.value === "Select a currency" || toSelect.value === "Select a currency") {
-//     return false;
-//   }
-
-//   if (currency.value.length === 0 || isNaN(currency.value)) {
-//     return false;
-//   }
-
-//   return true;
-// }
-
-// // function for calculating currency conversion
-// const converter = (exchangeRate) => currency.value * exchangeRate;
-
-// // add click event listener to the convert button
-// convertButton.onclick = async () => {
-//   if (validateFields()) {
-//     // disable currency field while getting exchange rate
-//     currency.disabled = true
-//     const currencies = `${fromSelect.value}_${toSelect.value}`
-//     const conversionURL = `https://free.currencyconverterapi.com/api/v5/convert?q=${currencies}&compact=ultra`;
-//     let exchangeRate = await getRequest(conversionURL);
-//     convertedCurrency = converter(exchangeRate[currencies])
-//     const currencySymbol = toSelect.selectedOptions[0].dataset.symbol
-//     convertedCurrencyField.value = `${currencySymbol} ${convertedCurrency.toFixed(2)}`
-//   };
-// }
-
