@@ -58,7 +58,7 @@ const serveCurrencies = (request) => {
   return caches.open(cacheName).then((cache) => {
     return cache.match(storageUrl).then((response) => {
       let networkFetch = fetch(request).then((networkResponse) => {
-        if (response.status !== 200) {
+        if (networkResponse.status !== 200) {
           console.log('failed')
         }
         // if response = 404, return st
