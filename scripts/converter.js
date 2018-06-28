@@ -21,7 +21,6 @@ const openDb = () => {
 
 class Converter {
   constructor() {
-    this.populateSelectFields();
     this.dbPromise = openDb();
     this.handleClick();
   }
@@ -61,7 +60,7 @@ class Converter {
   }
 
   async populateSelectFields() {
-    console.log('populating')
+    console.log('populating currencies')
     const { results } = await this.getRequest(currenciesURL);
 
     for (let country in results) {

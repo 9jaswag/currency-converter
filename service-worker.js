@@ -33,20 +33,13 @@ self.addEventListener('fetch', (event) => {
   }
 
   if (requestUrl.origin === "https://free.currencyconverterapi.com") {
-    console.log('calling outsides')
+    console.log(requestUrl.pathname)
     if (requestUrl.pathname.endsWith('currencies')) {
       event.respondWith(serveCurrencies(event.request));
       return;
     }
 
-    if (requestUrl.pathname.endsWith('curvenc')) {
-      event.respondWith(serveCurrencies(event.request));
-      return;
-    }
-
     // if (requestUrl.pathname.endsWith('convert')) {
-    //   console.log('gotten x rate')
-    //   // open indexdb and find the exchange rate...return if it exists
     //   event.respondWith(serveExchangeRate(event.request));
     //   return;
     // }
@@ -60,14 +53,20 @@ self.addEventListener('fetch', (event) => {
 });
 
 const serveCurrencies = (request) => {
+  console.log('fetching currencies')
   const storageUrl = "api/v5/currencies";
 
   return caches.open(cacheName).then((cache) => {
     return cache.match(storageUrl).then((response) => {
       let networkFetch = fetch(request).then((networkResponse) => {
+        if (response.status !== 200) {
+          console.log('failed')
+        }
+        // if response = 404, return st
         cache.put(storageUrl, networkResponse.clone());
         return networkResponse;
       });
+      // catch if no network and respond
 
       return response || networkFetch;
     });
@@ -75,17 +74,14 @@ const serveCurrencies = (request) => {
 }
 
 const serveExchangeRate = (request) => {
-  // const storageUrl = "api/v5/currencies";
-
-  // return caches.open(cacheName).then((cache) => {
-  //   return cache.match(storageUrl).then((response) => {
-  //     let networkFetch = fetch(request).then((networkResponse) => {
-  //       cache.put(storageUrl, networkResponse.clone());
-  //       return networkResponse;
-  //     });
-  //     console.log(response || networkFetch)
-
-  //     return response || networkFetch;
-  //   });
-  // });
+  console.log('fetching x-rate')
+  let networkFetch = fetch(request).then(networkResponse => {
+    console.log(networkResponse)
+  })
 }
+
+self.addEventListener('message', function (event) {
+  if (event.data.action === 'skipWaiting') {
+    self.skipWaiting();
+  }
+});

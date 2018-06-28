@@ -8,15 +8,58 @@ define(function (require) {
 class IndexController {
   constructor() {
     this.registerServiceWorker();
-    new Converter();
+    this.converter = new Converter();
   }
 
   registerServiceWorker() {
     if (!navigator.serviceWorker) return;
     navigator.serviceWorker.register('service-worker.js').then((reg) => {
       console.log('service worker registered')
+      this.converter.populateSelectFields();
+
+      if (!navigator.serviceWorker.controller) {
+        return;
+      }
+
+      if (reg.waiting) {
+        this.updateReady(reg.waiting);
+        return;
+      }
+
+      if (reg.installing) {
+        this.trackInstalling(reg.installing);
+        return;
+      }
+
+      reg.addEventListener('updatefound', () => {
+        this.trackInstalling(reg.installing);
+      });
+
+      let refreshing;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (refreshing) return;
+        window.location.reload();
+        refreshing = true;
+      });
+
     }).catch((error) => {
       console.log('service worker registration failed', error)
+    });
+  }
+
+  updateReady(worker) {
+    const approveUpdate = confirm('New updates available');
+    if (!approveUpdate) {
+      return;
+    }
+    worker.postMessage({ action: 'skipWaiting' });
+  }
+
+  trackInstalling(worker) {
+    worker.addEventListener('statechange', () => {
+      if (worker.state == 'installed') {
+        this.updateReady(worker);
+      }
     });
   }
 }
