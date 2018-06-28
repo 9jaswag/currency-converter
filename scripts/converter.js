@@ -26,6 +26,21 @@ class Converter {
     this.handleClick();
   }
 
+  setDbValue(key, val) {
+    return this.dbPromise.then(db => {
+      const tx = db.transaction('exchangeRates', 'readwrite');
+      tx.objectStore('exchangeRates').put(val, key);
+      return tx.complete;
+    });
+  }
+
+  getDbValue(key) {
+    return this.dbPromise.then(db => {
+      return db.transaction('exchangeRates')
+        .objectStore('exchangeRates').get(key);
+    });
+  }
+
   getRequest(url) {
     return fetch(url)
       .then(response => {
@@ -74,6 +89,13 @@ class Converter {
     return currency.value * exchangeRate;
   }
 
+  getExchangeRate(url, currencies) {
+    // const requestUrl = new URL(url);
+    this.getDbValue(0.865404).then(response => {
+      console.log(response)
+    })
+  }
+
   handleClick() {
     convertButton.onclick = async () => {
       if (this.validateFields()) {
@@ -81,18 +103,18 @@ class Converter {
         currency.disabled = true; // enable later
         const currencies = `${fromSelect.value}_${toSelect.value}`;
         const conversionURL = `https://free.currencyconverterapi.com/api/v5/convert?q=${currencies}&compact=ultra`;
-        let exchangeRate = await this.getRequest(conversionURL);
+        let exchangeRate = await this.getExchangeRate(conversionURL, currencies);
         // add exchange rate to indexDB
-        this.dbPromise.then(function (db) {
-          if (!db) return;
+        // this.dbPromise.then(function (db) {
+        //   if (!db) return;
 
-          let tx = db.transaction('exchangeRates', 'readwrite');
-          let store = tx.objectStore('exchangeRates');
-          store.put(currencies, exchangeRate[currencies]);
-        });
-        const convertedCurrency = this.converter(exchangeRate[currencies])
-        const currencySymbol = toSelect.selectedOptions[0].dataset.symbol
-        convertedCurrencyField.value = `${currencySymbol} ${convertedCurrency.toFixed(2)}`
+        //   let tx = db.transaction('exchangeRates', 'readwrite');
+        //   let store = tx.objectStore('exchangeRates');
+        //   store.put({ currencies: exchangeRate[currencies] }, currencies);
+        // });
+        // const convertedCurrency = this.converter(exchangeRate[currencies])
+        // const currencySymbol = toSelect.selectedOptions[0].dataset.symbol
+        // convertedCurrencyField.value = `${currencySymbol} ${convertedCurrency.toFixed(2)}`
       };
     }
   }

@@ -8,7 +8,7 @@ define(function (require) {
 class IndexController {
   constructor() {
     this.registerServiceWorker();
-    new Converter()
+    new Converter();
   }
 
   registerServiceWorker() {

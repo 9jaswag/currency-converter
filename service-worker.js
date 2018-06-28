@@ -38,11 +38,12 @@ self.addEventListener('fetch', (event) => {
       return;
     }
 
-    if (requestUrl.pathname.endsWith('convert')) {
-      console.log('gotten x rate')
-      // event.respondWith(serveExchangeRate(event.request));
-      // return;
-    }
+    // if (requestUrl.pathname.endsWith('convert')) {
+    //   console.log('gotten x rate')
+    //   // open indexdb and find the exchange rate...return if it exists
+    //   event.respondWith(serveExchangeRate(event.request));
+    //   return;
+    // }
   }
 
   event.respondWith(
@@ -68,17 +69,17 @@ const serveCurrencies = (request) => {
 }
 
 const serveExchangeRate = (request) => {
-  const storageUrl = "api/v5/currencies";
+  // const storageUrl = "api/v5/currencies";
 
-  return caches.open(cacheName).then((cache) => {
-    return cache.match(storageUrl).then((response) => {
-      let networkFetch = fetch(request).then((networkResponse) => {
-        cache.put(storageUrl, networkResponse.clone());
-        return networkResponse;
-      });
-      console.log(response || networkFetch)
+  // return caches.open(cacheName).then((cache) => {
+  //   return cache.match(storageUrl).then((response) => {
+  //     let networkFetch = fetch(request).then((networkResponse) => {
+  //       cache.put(storageUrl, networkResponse.clone());
+  //       return networkResponse;
+  //     });
+  //     console.log(response || networkFetch)
 
-      return response || networkFetch;
-    });
-  });
+  //     return response || networkFetch;
+  //   });
+  // });
 }
