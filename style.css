@@ -10,3 +10,43 @@ body {
 .margin-y-2 {
   margin: 2rem 0;
 }
+
+select, input {
+  border-radius: 0.15rem !important;
+  border: 0px !important;
+  background-color: #ebeff2 !important;
+  -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+}
+
+button {
+  -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+}
+
+.form-control:disabled, .form-control[readonly] {
+  background-color: #e9ecef !important;
+}
+
+label {
+  font-size: 0.75rem;
+}
+
+@media (max-width: 992px) {
+  .invisible {
+    display: none !important;
+  }
+}
+
+.fa-sync {
+  float: right;
+  height: 2rem;
+  width: 2rem;
+  display: flex !important;
+  background-color: #28a745!important;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  color: white;
+}

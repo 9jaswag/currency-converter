@@ -10,7 +10,9 @@ const convertedCurrencyField = document.querySelector('#converted-currency');
 const convertButton = document.querySelector('#convert-button');
 const errorAlert = document.querySelector('.alert');
 const closeButton = document.querySelector('.close-alert');
+const swapButton = document.querySelector('.fa-sync');
 
+// function to create the currency converter database
 const openDb = () => {
   if (!navigator.serviceWorker) {
     return Promise.resolve();
@@ -26,7 +28,19 @@ closeButton.onclick = (event) => {
   event.stopPropagation();
   const alertDiv = event.target.closest("div.alert");
   alertDiv.classList.add('d-none')
-}
+};
+
+// event listener for swapping selected currencies
+swapButton.onclick = () => {
+  if (fromSelect.value === "" || toSelect.value === "") {
+    Converter.displayOfflineMessage("No currency selected")
+    return;
+  }
+  const fromValue = fromSelect.value;
+  const toValue = toSelect.value;
+  fromSelect.value = toValue;
+  toSelect.value = fromValue;
+};
 
 class Converter {
   constructor() {
@@ -74,7 +88,7 @@ class Converter {
     const { results } = await this.getRequest(currenciesURL) || { results: false };
     if (!results) {
       // display offline alert
-      this.displayOfflineMessage();
+      Converter.displayOfflineMessage();
       return;
     }
 
@@ -96,7 +110,8 @@ class Converter {
   }
 
   validateFields() {
-    if (fromSelect.value === "Select a currency" || toSelect.value === "Select a currency") {
+    if (fromSelect.value === "" || toSelect.value === "" || currency.value === "") {
+      Converter.displayOfflineMessage("Please fill all fields correctly")
       return false;
     }
 
@@ -146,7 +161,7 @@ class Converter {
         let exchangeRate = await this.getExchangeRate(conversionURL, currencies);
         if (!exchangeRate) {
           // display offline alert
-          this.displayOfflineMessage();
+          Converter.displayOfflineMessage();
           convertedCurrencyField.value = "";
           return;
         }
@@ -158,9 +173,11 @@ class Converter {
     }
   }
 
-  displayOfflineMessage() {
+  static displayOfflineMessage(
+    message = "<strong>Holy guacamole!</strong> I swear it's not my fault. You're offline!"
+  ) {
     // check if it has none
-    errorAlert.firstElementChild.innerHTML = "<strong>Holy guacamole!</strong> I swear it's not my fault. You're offline!"
+    errorAlert.firstElementChild.innerHTML = message;
     errorAlert.classList.remove('d-none');
   }
 }
