@@ -8,6 +8,8 @@ const toSelect = document.querySelector('#to-currency');
 const currency = document.querySelector('#currency');
 const convertedCurrencyField = document.querySelector('#converted-currency');
 const convertButton = document.querySelector('#convert-button');
+const errorAlert = document.querySelector('.alert');
+const closeButton = document.querySelector('.close-alert');
 
 const openDb = () => {
   if (!navigator.serviceWorker) {
@@ -18,6 +20,13 @@ const openDb = () => {
     upgradeDb.createObjectStore('exchangeRates');
   });
 };
+
+// event listener for closing alert
+closeButton.onclick = (event) => {
+  event.stopPropagation();
+  const alertDiv = event.target.closest("div.alert");
+  alertDiv.classList.add('d-none')
+}
 
 class Converter {
   constructor() {
@@ -56,7 +65,8 @@ class Converter {
         }
         return response.json();
       })
-      .then(response => response);
+      .then(response => response)
+      .catch(error => console.warn(error));
   }
 
   async populateSelectFields() {
@@ -101,13 +111,18 @@ class Converter {
     let networkFetch = await this.getRequest(url);
     // check the indexDB to see if the requested exchange rate also exists
     return this.getDbValue(currencies).then(response => {
-      // if the exchange rate exists, replace it with the latest one from the API call
+      // if the exchange rate exists in the iDB
       if (response) {
         // delete the response from the iDB
         this.deleteDbValue(currencies);
       }
+      // if there's no network and the exchange rate is not in the iDB
+      if (!response && !networkFetch) {
+        return false;
+      }
+
       // add the new exchange rate to the iDB
-      this.setDbValue(currencies, networkFetch)
+      this.setDbValue(currencies, networkFetch);
 
       // return the response if it exists in the indexDB or the network response if it doesn't exist
       return response || networkFetch;
@@ -120,11 +135,22 @@ class Converter {
         const currencies = `${fromSelect.value}_${toSelect.value}`;
         const conversionURL = `https://free.currencyconverterapi.com/api/v5/convert?q=${currencies}&compact=ultra`;
         let exchangeRate = await this.getExchangeRate(conversionURL, currencies);
+        console.log(exchangeRate)
+        if (!exchangeRate) {
+          // display offline alert
+          this.displayOfflineMessage();
+          return;
+        }
         const convertedCurrency = this.converter(exchangeRate[currencies])
         const currencySymbol = toSelect.selectedOptions[0].dataset.symbol
         // NAN check
         convertedCurrencyField.value = `${currencySymbol} ${convertedCurrency.toFixed(2)}`;
       };
     }
+  }
+
+  displayOfflineMessage() {
+    errorAlert.firstElementChild.innerHTML = "<strong>Holy guacamole!</strong> I swear it's not my fault. You're offline!"
+    errorAlert.classList.remove('d-none');
   }
 }

@@ -13,13 +13,12 @@ class IndexController {
 
   registerServiceWorker() {
     if (!navigator.serviceWorker) return;
+
     navigator.serviceWorker.register('service-worker.js').then((reg) => {
       console.log('service worker registered')
       this.converter.populateSelectFields();
 
-      if (!navigator.serviceWorker.controller) {
-        return;
-      }
+      if (!navigator.serviceWorker.controller) return;
 
       if (reg.waiting) {
         this.updateReady(reg.waiting);
@@ -35,15 +34,15 @@ class IndexController {
         this.trackInstalling(reg.installing);
       });
 
-      let refreshing;
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (refreshing) return;
-        window.location.reload();
-        refreshing = true;
-      });
-
     }).catch((error) => {
       console.log('service worker registration failed', error)
+    });
+
+    let refreshing;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (refreshing) return;
+      window.location.reload();
+      refreshing = true;
     });
   }
 
