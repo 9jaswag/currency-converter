@@ -111,18 +111,22 @@ class Converter {
     let networkFetch = await this.getRequest(url);
     // check the indexDB to see if the requested exchange rate also exists
     return this.getDbValue(currencies).then(response => {
-      // if the exchange rate exists in the iDB
-      if (response) {
-        // delete the response from the iDB
-        this.deleteDbValue(currencies);
-      }
-      // if there's no network and the exchange rate is not in the iDB
+      // if user is offline and the exchange rate is not in the iDB
       if (!response && !networkFetch) {
         return false;
       }
 
-      // add the new exchange rate to the iDB
-      this.setDbValue(currencies, networkFetch);
+      // if the exchange rate exists in the iDB and there's new data
+      if (response && networkFetch !== undefined) {
+        // delete the response from the iDB
+        this.deleteDbValue(currencies);
+      }
+
+      // if there's new data, add it to the iDB
+      if (networkFetch !== undefined) {
+        // add the new exchange rate to the iDB
+        this.setDbValue(currencies, networkFetch);
+      }
 
       // return the response if it exists in the indexDB or the network response if it doesn't exist
       return response || networkFetch;
@@ -135,7 +139,6 @@ class Converter {
         const currencies = `${fromSelect.value}_${toSelect.value}`;
         const conversionURL = `https://free.currencyconverterapi.com/api/v5/convert?q=${currencies}&compact=ultra`;
         let exchangeRate = await this.getExchangeRate(conversionURL, currencies);
-        console.log(exchangeRate)
         if (!exchangeRate) {
           // display offline alert
           this.displayOfflineMessage();
@@ -150,6 +153,7 @@ class Converter {
   }
 
   displayOfflineMessage() {
+    // check if it has none
     errorAlert.firstElementChild.innerHTML = "<strong>Holy guacamole!</strong> I swear it's not my fault. You're offline!"
     errorAlert.classList.remove('d-none');
   }
