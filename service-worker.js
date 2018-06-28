@@ -33,7 +33,6 @@ self.addEventListener('fetch', (event) => {
   }
 
   if (requestUrl.origin === "https://free.currencyconverterapi.com") {
-    console.log(requestUrl.pathname)
     if (requestUrl.pathname.endsWith('currencies')) {
       event.respondWith(serveCurrencies(event.request));
       return;
