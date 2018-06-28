@@ -156,6 +156,7 @@ class Converter {
   handleClick() {
     convertButton.onclick = async () => {
       if (this.validateFields()) {
+        convertedCurrencyField.value = "converting..."
         const currencies = `${fromSelect.value}_${toSelect.value}`;
         const conversionURL = `https://free.currencyconverterapi.com/api/v5/convert?q=${currencies}&compact=ultra`;
         let exchangeRate = await this.getExchangeRate(conversionURL, currencies);
