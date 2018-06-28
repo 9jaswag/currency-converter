@@ -142,6 +142,7 @@ class Converter {
         if (!exchangeRate) {
           // display offline alert
           this.displayOfflineMessage();
+          convertedCurrencyField.value = "";
           return;
         }
         const convertedCurrency = this.converter(exchangeRate[currencies])
