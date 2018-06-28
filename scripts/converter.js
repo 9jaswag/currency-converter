@@ -71,7 +71,12 @@ class Converter {
 
   async populateSelectFields() {
     console.log('populating currencies')
-    const { results } = await this.getRequest(currenciesURL);
+    const { results } = await this.getRequest(currenciesURL) || { results: false };
+    if (!results) {
+      // display offline alert
+      this.displayOfflineMessage();
+      return;
+    }
 
     for (let country in results) {
       let option = document.createElement("option");

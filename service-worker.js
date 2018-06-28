@@ -37,11 +37,6 @@ self.addEventListener('fetch', (event) => {
       event.respondWith(serveCurrencies(event.request));
       return;
     }
-
-    // if (requestUrl.pathname.endsWith('convert')) {
-    //   event.respondWith(serveExchangeRate(event.request));
-    //   return;
-    // }
   }
 
   event.respondWith(
@@ -59,7 +54,7 @@ const serveCurrencies = (request) => {
     return cache.match(storageUrl).then((response) => {
       let networkFetch = fetch(request).then((networkResponse) => {
         if (networkResponse.status !== 200) {
-          console.log('failed')
+          console.warn('populating fields failed');
         }
         // if response = 404, return st
         cache.put(storageUrl, networkResponse.clone());
@@ -70,13 +65,6 @@ const serveCurrencies = (request) => {
       return response || networkFetch;
     });
   });
-}
-
-const serveExchangeRate = (request) => {
-  console.log('fetching x-rate')
-  let networkFetch = fetch(request).then(networkResponse => {
-    console.log(networkResponse)
-  })
 }
 
 self.addEventListener('message', function (event) {
