@@ -100,20 +100,17 @@ class Converter {
   async getExchangeRate(url, currencies) {
     // get the exchange rate from the currency API
     let networkFetch = await this.getRequest(url);
-    // let networkFetch = { "USD_NGN": 359.999799 };
-    console.log(networkFetch)
-    // check the indexDB to see if the exchange also exists
-    return this.getDbValue(1.351085).then(response => {
-      // if the exchange rate exists, replace it with the latest one from the API call before sending it to the user
+    // check the indexDB to see if the requested exchange rate also exists
+    return this.getDbValue(currencies).then(response => {
+      // if the exchange rate exists, replace it with the latest one from the API call
       if (response) {
-        console.log(response)
         // delete the response from the iDB
-        this.deleteDbValue(1.351085);
+        this.deleteDbValue(currencies);
       }
       // add the new exchange rate to the iDB
       this.setDbValue(currencies, networkFetch)
 
-      // return the response if it exists in thr indexDB or the network response if it doesn't exist
+      // return the response if it exists in the indexDB or the network response if it doesn't exist
       return response || networkFetch;
     })
   }
