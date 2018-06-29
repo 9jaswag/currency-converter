@@ -17,7 +17,6 @@ const urlsToCache = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(cacheName).then(cache => {
-      console.log('about to cache')
       return cache.addAll(urlsToCache);
     })
   )
