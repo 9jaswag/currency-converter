@@ -1,23 +1,23 @@
 const cacheName = 'currency-converter';
-const urlsToCache = [
-  '/',
-  '/style.css',
-  '/scripts/require.js',
-  '/scripts/idb.js',
-  '/scripts/index.js',
-  '/scripts/Chart.bundle.min.js',
-  '/scripts/converter.js',
-  '/scripts/IndexController.js',
-  'https://fonts.gstatic.com/s/muli/v11/7Auwp_0qiz-afTLGLQjUwkQ.woff2',
-  'https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css',
-  'https://free.currencyconverterapi.com/api/v5/currencies'
-];
 
 // install service worker
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(cacheName).then(cache => {
-      return cache.addAll(urlsToCache);
+      console.log('about to cache')
+      return cache.addAll([
+        '/',
+        '/style.css',
+        '/scripts/require.js',
+        '/scripts/idb.js',
+        '/scripts/index.js',
+        '/scripts/Chart.bundle.min.js',
+        '/scripts/converter.js',
+        '/scripts/IndexController.js',
+        'https://fonts.gstatic.com/s/muli/v11/7Auwp_0qiz-afTLGLQjUwkQ.woff2',
+        'https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css',
+        'https://free.currencyconverterapi.com/api/v5/currencies'
+      ]);
     })
   )
 });
