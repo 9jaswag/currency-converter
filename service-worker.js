@@ -1,6 +1,6 @@
 const cacheName = 'currency-converter';
 const urlsToCache = [
-  '/',
+  './',
   '/style.css',
   '/scripts/require.js',
   '/scripts/idb.js',
@@ -17,7 +17,7 @@ const urlsToCache = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(cacheName).then(cache => {
-      console.log('about to cache', urlsToCache)
+      console.log('about to cache now')
       return cache.addAll(urlsToCache);
     })
   )

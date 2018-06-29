@@ -14,7 +14,7 @@ class IndexController {
   registerServiceWorker() {
     if (!navigator.serviceWorker) return;
 
-    navigator.serviceWorker.register('service-worker.js', { scope: '/currency-converter/' }).then((reg) => {
+    navigator.serviceWorker.register('service-worker.js').then((reg) => {
       console.log('service worker registered')
       this.converter.populateSelectFields();
 
