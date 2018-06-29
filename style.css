@@ -31,12 +31,6 @@ label {
   font-size: 0.75rem;
 }
 
-@media (max-width: 992px) {
-  .invisible {
-    display: none !important;
-  }
-}
-
 .fa-sync {
   float: right;
   height: 2rem;
