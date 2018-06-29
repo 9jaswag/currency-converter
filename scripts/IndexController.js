@@ -6,9 +6,9 @@ define(function (require) {
 });
 
 class IndexController {
-  constructor() {
+  constructor(chart) {
     this.registerServiceWorker();
-    this.converter = new Converter();
+    this.converter = new Converter(chart);
   }
 
   registerServiceWorker() {

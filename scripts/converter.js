@@ -1,4 +1,4 @@
-define(function () {
+define(function (require) {
   return Converter;
 })
 
@@ -11,6 +11,8 @@ const convertButton = document.querySelector('#convert-button');
 const errorAlert = document.querySelector('.alert');
 const closeButton = document.querySelector('.close-alert');
 const swapButton = document.querySelector('.fa-sync');
+const ctx = document.getElementById("myChart").getContext('2d')
+
 
 // function to create the currency converter database
 const openDb = () => {
@@ -42,10 +44,26 @@ swapButton.onclick = () => {
   toSelect.value = fromValue;
 };
 
+// function for formatting date
+const formatDate = (date) => {
+  return date.toLocaleDateString('en-GB').split('/').reverse().join('-');
+}
+
+// function to get date range
+const getDateRange = () => {
+  let date = new Date();
+  date.setDate(date.getDate() - 5)
+  const today = formatDate(new Date(Date.now()));
+  const fiveDaysAgo = formatDate(date)
+
+  return [fiveDaysAgo, today]
+}
+
 class Converter {
-  constructor() {
+  constructor(chart) {
     this.dbPromise = openDb();
     this.handleClick();
+    this.chart = chart;
   }
 
   setDbValue(key, val) {
@@ -122,8 +140,10 @@ class Converter {
     return true;
   }
 
-  converter(exchangeRate) {
-    return currency.value * exchangeRate;
+  converter(exchangeRate, currencies, date) {
+    const currentExchangeRate = exchangeRate[currencies][date]
+    this.renderChart(exchangeRate, currencies);
+    return currency.value * currentExchangeRate;
   }
 
   async getExchangeRate(url, currencies) {
@@ -158,7 +178,8 @@ class Converter {
       if (this.validateFields()) {
         convertedCurrencyField.value = "converting..."
         const currencies = `${fromSelect.value}_${toSelect.value}`;
-        const conversionURL = `https://free.currencyconverterapi.com/api/v5/convert?q=${currencies}&compact=ultra`;
+        const dateRange = getDateRange();
+        const conversionURL = `https://free.currencyconverterapi.com/api/v5/convert?q=${currencies}&compact=ultra&date=${dateRange[0]}&endDate=${dateRange[1]}`;
         let exchangeRate = await this.getExchangeRate(conversionURL, currencies);
         if (!exchangeRate) {
           // display offline alert
@@ -166,12 +187,43 @@ class Converter {
           convertedCurrencyField.value = "";
           return;
         }
-        const convertedCurrency = this.converter(exchangeRate[currencies])
+        const convertedCurrency = this.converter(exchangeRate, currencies, dateRange[1])
         const currencySymbol = toSelect.selectedOptions[0].dataset.symbol
         // NAN check
         convertedCurrencyField.value = `${currencySymbol} ${convertedCurrency.toFixed(2)}`;
       };
     }
+  }
+
+  renderChart(exchangeRates, currency) {
+    const labels = Object.keys(exchangeRates[currency]);
+    const dataset = Object.values(exchangeRates[currency]);
+    const [currency1, currency2] = currency.split('_');
+
+    const myChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: currency,
+          data: dataset,
+          borderColor: '#3e95cd',
+          borderWidth: 2,
+          fill: false
+        }]
+      },
+      options: {
+        title: {
+          display: true,
+          text: `Changes of the ${currency1} against the ${currency2} in the past five days`
+        },
+        legend: {
+          labels: {
+            fontFamily: "'Muli', sans-serif"
+          }
+        }
+      }
+    });
   }
 
   static displayOfflineMessage(
