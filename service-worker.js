@@ -4,7 +4,7 @@ const urlsToCache = [
   '/style.css',
   '/scripts/require.js',
   '/scripts/idb.js',
-  '/scripts/idb.js',
+  '/scripts/index.js',
   '/scripts/Chart.bundle.min.js',
   '/scripts/converter.js',
   '/scripts/IndexController.js',
@@ -57,11 +57,9 @@ const serveCurrencies = (request) => {
         if (networkResponse.status !== 200) {
           console.warn('populating fields failed');
         }
-        // if response = 404, return st
         cache.put(storageUrl, networkResponse.clone());
         return networkResponse;
       });
-      // catch if no network and respond
 
       return response || networkFetch;
     });
