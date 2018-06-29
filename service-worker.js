@@ -1,10 +1,11 @@
-const cacheName = 'currency-converter-v1';
+const cacheName = 'currency-converter';
 const urlsToCache = [
   '/',
   '/style.css',
   '/scripts/require.js',
   '/scripts/idb.js',
-  '/scripts/index.js',
+  '/scripts/idb.js',
+  '/scripts/Chart.bundle.min.js',
   '/scripts/converter.js',
   '/scripts/IndexController.js',
   'https://fonts.gstatic.com/s/muli/v11/7Auwp_0qiz-afTLGLQjUwkQ.woff2',
