@@ -1,13 +1,13 @@
 const cacheName = 'currency-converter';
 const urlsToCache = [
-  '/',
-  '/style.css',
-  '/scripts/require.js',
-  '/scripts/idb.js',
-  '/scripts/index.js',
-  '/scripts/Chart.bundle.min.js',
-  '/scripts/converter.js',
-  '/scripts/IndexController.js',
+  './',
+  './style.css',
+  './scripts/require.js',
+  './scripts/idb.js',
+  './scripts/index.js',
+  './scripts/Chart.bundle.min.js',
+  './scripts/converter.js',
+  './scripts/IndexController.js',
   'https://fonts.gstatic.com/s/muli/v11/7Auwp_0qiz-afTLGLQjUwkQ.woff2',
   'https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css',
   'https://free.currencyconverterapi.com/api/v5/currencies'
