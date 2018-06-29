@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="Description" content="A simple currency converter that implements Service Workers, Cache API and IndexedDB API.">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Currency Converter</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4"
@@ -12,7 +13,7 @@
   <link href="https://fonts.googleapis.com/css?family=Muli" rel="stylesheet">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt"
     crossorigin="anonymous">
-  <link rel="manifest" href="/manifest.json">
+  <link rel="manifest" href="manifest.json">
   <script data-main="scripts/index" src="scripts/require.js"></script>
   <script src="scripts/idb.js"></script>
 </head>
@@ -34,25 +35,25 @@
         <div class="col-12 col-lg-6">
           <div class="col-12 margin-y-2">
             <label for="from-currency">Select a currency</label>
-            <select id="from-currency" class="custom-select" aria-describedby="currencyHelp">
+            <select id="from-currency" class="custom-select" aria-describedby="fromCurrencyHelp">
               <option selected></option>
             </select>
-            <small id="currencyHelp" class="form-text text-muted">Select the currency you want to convert from.</small>
+            <small id="fromCurrencyHelp" class="form-text text-dark">Select the currency you want to convert from.</small>
             <i class="fas fa-sync"></i>
           </div>
           <div class="col-12">
             <label for="to-currency">Select a currency</label>
-            <select id="to-currency" class="custom-select" aria-describedby="currencyHelp">
+            <select id="to-currency" class="custom-select" aria-describedby="toCurrencyHelp">
               <option selected></option>
             </select>
-            <small id="currencyHelp" class="form-text text-muted">Select the currency you want to convert to.</small>
+            <small id="toCurrencyHelp" class="form-text text-dark">Select the currency you want to convert to.</small>
           </div>
         </div>
         <div class="col-12 col-lg-6">
           <div class="col-12 margin-y-2">
             <label for="currency">Enter amount</label>
             <input type="number" class="form-control" id="currency" aria-describedby="currencyHelp" step="1">
-            <small id="currencyHelp" class="form-text text-muted">Only numbers are allowed.</small>
+            <small id="currencyHelp" class="form-text text-dark">Only numbers are allowed.</small>
           </div>
           <div class="col-12">
             <label for="converted-currency" class="invisible">.</label>
