@@ -1,3 +1,4 @@
+// user requirejs to export the converter class
 define(function () {
   return Converter;
 })
@@ -92,7 +93,7 @@ class Converter {
   getRequest(url) {
     return fetch(url)
       .then(response => {
-        if (response.status != 200) { // handle errors later
+        if (response.status != 200) {
           return false;
         }
         return response.json();
@@ -102,7 +103,6 @@ class Converter {
   }
 
   async populateSelectFields() {
-    console.log('populating currencies')
     const { results } = await this.getRequest(currenciesURL) || { results: false };
     if (!results) {
       // display offline alert
@@ -189,7 +189,6 @@ class Converter {
         }
         const convertedCurrency = this.converter(exchangeRate, currencies, dateRange[1])
         const currencySymbol = toSelect.selectedOptions[0].dataset.symbol
-        // NAN check
         convertedCurrencyField.value = `${currencySymbol} ${convertedCurrency.toFixed(2)}`;
       };
     }
@@ -229,7 +228,6 @@ class Converter {
   static displayOfflineMessage(
     message = "<strong>Holy guacamole!</strong> I swear it's not my fault. You're offline!"
   ) {
-    // check if it has none
     errorAlert.firstElementChild.innerHTML = message;
     errorAlert.classList.remove('d-none');
   }

@@ -48,15 +48,11 @@ self.addEventListener('fetch', (event) => {
 });
 
 const serveCurrencies = (request) => {
-  console.log('fetching currencies')
   const storageUrl = "api/v5/currencies";
 
   return caches.open(cacheName).then((cache) => {
     return cache.match(storageUrl).then((response) => {
       let networkFetch = fetch(request).then((networkResponse) => {
-        if (networkResponse.status !== 200) {
-          console.warn('populating fields failed');
-        }
         cache.put(storageUrl, networkResponse.clone());
         return networkResponse;
       });
