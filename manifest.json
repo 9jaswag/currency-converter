@@ -1,8 +1,8 @@
 {
   "name": "Currency Converter",
-  "short_name": "currency converter",
+  "short_name": "CC",
   "description": "A simple currency converter that implements Service Workers, Cache API and IndexedDB API",
-  "start_url": "/?homescreen=1",
+  "start_url": "index.html",
   "background_color": "#000000",
   "display": "standalone",
   "theme_color": "#0f4a73",
